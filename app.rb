@@ -23,8 +23,14 @@ class App
   end
 
   def request_time(params)
-    time = TimeService.new(params).answer
-    [time[:body], time[:status], headers]
+    time = TimeService.new(params)
+
+    if time.success?
+      [time.answer, 200, headers]
+    else
+      [time.answer, 400, headers]
+    end
+
   end
 
 end
