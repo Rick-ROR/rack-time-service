@@ -5,33 +5,26 @@ class App
   def call(env)
     request = Rack::Request.new(env)
 
-    if request.path_info == /time/
-      [status, headers, body]
+    if request.path_info == '/time'
+      Rack::Response.new(*request_time(request.params))
     else
-      request_404
+      Rack::Response.new(*request_404)
     end
   end
 
   private
 
-  def status
-    200
-  end
-
   def headers
     { 'Content-Type' => 'text/plain' }
   end
 
-  def body
-    ["Welcome to the real World.\n"]
-  end
-
   def request_404
-    Rack::Response.new(["Page not found. Try /time?format=year\n\n"], 404, headers)
+    [["Page not found. Try /time?help\n\n"], 404, headers]
   end
 
-  def request_time
-
+  def request_time(params)
+    time = TimeService.new(params).answer
+    [time[:body], time[:status], headers]
   end
 
 end
