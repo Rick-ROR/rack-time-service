@@ -17,11 +17,11 @@ class TimeService
     unknown_formats.empty? && @formats.any?
   end
 
-  def answer
+  def result
     if success?
-      [Time.now.strftime(time_params) + "\n\n"]
+      [Time.now.strftime(time_params)]
     else
-      ["Unknown time format [#{@unknown_formats.join(", ")}]\n\n", help]
+      ["Unknown time format [#{@unknown_formats.join(", ")}]"] + help
     end
   end
 
@@ -32,8 +32,8 @@ class TimeService
   end
 
   def help
-    "Example valid request: /time?format=year,month,day\n" +
-      "Available time formats: #{FORMATS.keys.join(", ")}\n\n"
+      ["Example valid request: /time?format=year,month,day",
+      "Available time formats: #{FORMATS.keys.join(", ")}"]
   end
 
   def unknown_formats

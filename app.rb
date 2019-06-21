@@ -5,11 +5,13 @@ class App
   def call(env)
     request = Rack::Request.new(env)
 
-    if request.path_info == '/time'
-      Rack::Response.new(*request_time(request.params))
+    params = if request.path_info == '/time'
+      request_time(request.params)
     else
-      Rack::Response.new(*request_404)
+      request_404
     end
+
+    Rack::Response.new(*params).finish
   end
 
   private
@@ -24,13 +26,12 @@ class App
 
   def request_time(params)
     time = TimeService.new(params)
+    body = [time.result.join("\n") + "\n\n"]
 
     if time.success?
-      [time.answer, 200, headers]
+      [body, 200, headers]
     else
-      [time.answer, 400, headers]
+      [body, 400, headers]
     end
-
   end
-
 end
